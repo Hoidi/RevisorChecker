@@ -12,22 +12,169 @@ import java.util.Collections;
 
 public class Rev {
     public static void main(String[] args)  {
+        BookBank bookBank;
+        BankBank bankBank;
+
         PDDocument pd = null;
         try {
-            pd = PDDocument.load(new File("./src/main/resources/test.pdf"));
+            pd = PDDocument.load(new File("./src/main/resources/test_bok.pdf"));
             if (!pd.isEncrypted()) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 String text = stripper.getText(pd);
 
 
-                ArrayList<ArrayList<String>> lines = getLines(text);
-                BookBank bookBank = createBookBank(lines);
-                System.out.println("Text:" + text);
+                ArrayList<ArrayList<String>> lines = getLinesBook(text);
+                bookBank = createBookBank(lines);
             }
             pd.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        try {
+            pd = PDDocument.load(new File("./src/main/resources/test_bank.pdf"));
+            if (!pd.isEncrypted()) {
+                PDFTextStripper stripper = new PDFTextStripper();
+                String text = stripper.getText(pd);
+
+
+                ArrayList<ArrayList<String>> lines = getLinesBank(text);
+                bankBank = createBankBank(lines);
+            }
+            pd.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // TODO: Check for errors
+    }
+
+    private static ArrayList<ArrayList<String>> getLinesBank(String text) {
+        ArrayList<String> tmpLines = new ArrayList<>(Arrays.asList(text.split("\\r?\\n")));
+        ArrayList<ArrayList<String>> lines = new ArrayList<>();
+
+        for (int i = 0; i < tmpLines.size(); i++) {
+            lines.add(new ArrayList<>(Arrays.asList(tmpLines.get(i).split("\\s"))));
+        }
+
+        // removes the first few lines on each page
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).get(0).equals("Skapad")) {
+                if (i>0) {
+                    lines.remove(i-- -1); // there are some hidden "(3)"
+                }
+                for (int x = 0; x < 8; x++) {
+                    lines.remove(i);
+                }
+            }
+        }
+
+        lines.remove(lines.size()-1); // another hidden "(3)"
+
+        return lines;
+    }
+
+    private static BankBank createBankBank(ArrayList<ArrayList<String>> lines) {
+        // TODO: parsing
+        lines.get(0).remove(0);
+        lines.get(0).remove(0);
+        lines.get(0).remove(0);
+        double saldoIn = Double.parseDouble(String.join("",lines.get(0)).replace(",","."));
+        lines.remove(0);
+
+        lines.get(lines.size()-1).remove(0);
+        lines.get(lines.size()-1).remove(0);
+        double saldoUt = Double.parseDouble(String.join("",lines.get(lines.size()-1)).replace(",","."));
+        lines.remove(lines.size()-1);
+
+        BankBank bankBank = new BankBank(saldoIn,saldoUt);
+
+        MyDouble lastSaldo = new MyDouble(saldoIn);
+
+        for (ArrayList<String> s : lines) {
+            BankItem b = createBankItem(s,lastSaldo);
+            bankBank.addBankItem(b);
+        }
+
+        for (BankItem b : bankBank.getBankItems()) {
+            System.out.println(b.toString());
+        }
+
+        return bankBank;
+    }
+
+    private static BankItem createBankItem(ArrayList<String> s, MyDouble lastSaldoDouble) {
+        String date = s.remove(0);
+        s.remove(0);
+        s.remove(0);
+
+        double lastSaldo = lastSaldoDouble.getD();
+
+        String newSaldoStr = String.join(" ", s);
+        double newSaldo = Double.parseDouble(newSaldoStr.
+                substring(newSaldoStr.lastIndexOf(",", newSaldoStr.lastIndexOf(",") - 1)).
+                substring(4).
+                replace(" ","").
+                replace(",","."));
+
+        lastSaldoDouble.setD(newSaldo);
+
+        double saldoDiff = round(newSaldo - lastSaldo, 2);
+
+        // TODO: This is so ugly
+        if (Math.abs(newSaldo) < 1000.0) {
+            s.remove(s.size()-1);
+        } else if (Math.abs(newSaldo) < 1000000.0) {
+            s.remove(s.size()-1);
+            s.remove(s.size()-1);
+        } else if (Math.abs(newSaldo) < 1000000000.0) {
+            s.remove(s.size()-1);
+            s.remove(s.size()-1);
+            s.remove(s.size()-1);
+        }
+
+        double kredit = 0.0;
+        double debet = 0.0;
+
+        if (saldoDiff < 0) { // Kredit
+            ArrayList<String> kredList = new ArrayList<>();
+            if (Math.abs(saldoDiff) < 1000.0) {
+                kredList.add(s.remove(s.size()-1));
+            } else if (Math.abs(saldoDiff) < 1000000.0) {
+                kredList.add(s.remove(s.size()-1));
+                kredList.add(s.remove(s.size()-1));
+            } else if (Math.abs(saldoDiff) < 1000000000.0) {
+                kredList.add(s.remove(s.size()-1));
+                kredList.add(s.remove(s.size()-1));
+                kredList.add(s.remove(s.size()-1));
+            }
+            Collections.reverse(kredList);
+            kredit = Math.abs(Double.parseDouble(
+                    String.join("", kredList).
+                            replace(" ", "").
+                            replace(",",".")));
+        } else { // Debet
+            ArrayList<String> debList = new ArrayList<>();
+            if (Math.abs(saldoDiff) < 1000.0) {
+                debList.add(s.remove(s.size()-1));
+            } else if (Math.abs(saldoDiff) < 1000000.0) {
+                debList.add(s.remove(s.size()-1));
+                debList.add(s.remove(s.size()-1));
+            } else if (Math.abs(saldoDiff) < 1000000000.0) {
+                debList.add(s.remove(s.size()-1));
+                debList.add(s.remove(s.size()-1));
+                debList.add(s.remove(s.size()-1));
+            }
+            Collections.reverse(debList);
+            debet = Double.parseDouble(
+                    String.join("", debList).
+                            replace(" ", "").
+                            replace(",","."));
+        }
+
+        String comment = String.join(" ",s);
+
+        return new BankItem(date,comment,kredit,debet);
     }
 
     private static BookBank createBookBank(ArrayList<ArrayList<String>> lines) {
@@ -160,7 +307,8 @@ public class Rev {
         return Double.parseDouble(saldo.replace(",","."));
     }
 
-    private static ArrayList<ArrayList<String>> getLines(String text) {
+    private static ArrayList<ArrayList<String>> getLinesBook(String text) {
+        // TODO: Fix multi-page bookkeeping
         ArrayList<String> tmpLines = new ArrayList<>(Arrays.asList(text.split("\\r?\\n")));
         ArrayList<ArrayList<String>> lines = new ArrayList<>();
 
