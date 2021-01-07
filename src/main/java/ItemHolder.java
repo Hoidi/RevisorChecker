@@ -1,18 +1,15 @@
 import java.util.ArrayList;
 
-public class BookBank {
+public class ItemHolder<T> {
+
     private final double saldoIn;
     private final double saldoUt;
 
-    private ArrayList<BookItem> bookItems = new ArrayList<>();
+    private ArrayList<T> items = new ArrayList<>();
 
-    public BookBank(double saldoIn, double saldoUt) {
+    public ItemHolder(double saldoIn, double saldoUt) {
         this.saldoIn = saldoIn;
         this.saldoUt = saldoUt;
-    }
-
-    void addBookItem(BookItem bookItem) {
-        bookItems.add(bookItem);
     }
 
     public double getSaldoIn() {
@@ -21,5 +18,13 @@ public class BookBank {
 
     public double getSaldoUt() {
         return saldoUt;
+    }
+
+    void addItem(T item) {
+        items.add(item);
+    }
+
+    public ArrayList<T> getItems() {
+        return items;
     }
 }

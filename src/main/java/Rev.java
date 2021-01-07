@@ -12,8 +12,8 @@ import java.util.Collections;
 
 public class Rev {
     public static void main(String[] args)  {
-        BookBank bookBank;
-        BankBank bankBank;
+        ItemHolder book;
+        ItemHolder bank;
 
         PDDocument pd = null;
         try {
@@ -24,7 +24,7 @@ public class Rev {
 
 
                 ArrayList<ArrayList<String>> lines = getLinesBook(text);
-                bookBank = createBookBank(lines);
+                book = createBookBank(lines);
             }
             pd.close();
         } catch (IOException e) {
@@ -39,7 +39,8 @@ public class Rev {
 
 
                 ArrayList<ArrayList<String>> lines = getLinesBank(text);
-                bankBank = createBankBank(lines);
+                bank = createBankBank(lines);
+                bank.toString();
             }
             pd.close();
         } catch (IOException e) {
@@ -74,7 +75,7 @@ public class Rev {
         return lines;
     }
 
-    private static BankBank createBankBank(ArrayList<ArrayList<String>> lines) {
+    private static ItemHolder createBankBank(ArrayList<ArrayList<String>> lines) {
         // TODO: parsing
         lines.get(0).remove(0);
         lines.get(0).remove(0);
@@ -87,23 +88,19 @@ public class Rev {
         double saldoUt = Double.parseDouble(String.join("",lines.get(lines.size()-1)).replace(",","."));
         lines.remove(lines.size()-1);
 
-        BankBank bankBank = new BankBank(saldoIn,saldoUt);
+        ItemHolder bankBank = new ItemHolder<Item>(saldoIn,saldoUt);
 
         MyDouble lastSaldo = new MyDouble(saldoIn);
 
         for (ArrayList<String> s : lines) {
-            BankItem b = createBankItem(s,lastSaldo);
-            bankBank.addBankItem(b);
-        }
-
-        for (BankItem b : bankBank.getBankItems()) {
-            System.out.println(b.toString());
+            Item b = createBankItem(s,lastSaldo);
+            bankBank.addItem(b);
         }
 
         return bankBank;
     }
 
-    private static BankItem createBankItem(ArrayList<String> s, MyDouble lastSaldoDouble) {
+    private static Item createBankItem(ArrayList<String> s, MyDouble lastSaldoDouble) {
         String date = s.remove(0);
         s.remove(0);
         s.remove(0);
@@ -174,14 +171,14 @@ public class Rev {
 
         String comment = String.join(" ",s);
 
-        return new BankItem(date,comment,kredit,debet);
+        return new Item(date,comment,kredit,debet);
     }
 
-    private static BookBank createBookBank(ArrayList<ArrayList<String>> lines) {
+    private static ItemHolder createBookBank(ArrayList<ArrayList<String>> lines) {
         double saldoIn = getSaldoIn(lines.remove(0));
         double saldoUt = getSaldoOut(lines.remove(lines.size()-1));
 
-        BookBank bookBank = new BookBank(saldoIn,saldoUt);
+        ItemHolder bookBank = new ItemHolder<BookItem>(saldoIn,saldoUt);
 
         lines.remove(0);
         lines.remove(lines.size()-1);
@@ -190,7 +187,7 @@ public class Rev {
 
         for (ArrayList<String> s : lines) {
             BookItem b = createBookItem(s,lastSaldo);
-            bookBank.addBookItem(b);
+            bookBank.addItem(b);
         }
 
         return bookBank;
