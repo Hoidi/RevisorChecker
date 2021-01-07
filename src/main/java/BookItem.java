@@ -10,4 +10,14 @@ public class BookItem extends Item {
     public String getNumber() {
         return number;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(number).append("\t\t");
+        sb.append(super.toString());
+
+        return sb.toString();
+    }
 }
