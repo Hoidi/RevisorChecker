@@ -6,14 +6,12 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
 public class Rev {
     public static void main(String[] args)  {
-        ItemHolder book;
-        ItemHolder bank;
+        ItemHolder book = null;
+        ItemHolder bank = null;
 
         PDDocument pd = null;
         try {
@@ -39,7 +37,31 @@ public class Rev {
             e.printStackTrace();
         }
 
-        // TODO: Check for errors
+        evaluateBookkeeping(book,bank);
+    }
+
+    private static void evaluateBookkeeping(ItemHolder book, ItemHolder bank) {
+        HashMap errorMap = book.equals(bank);
+        if (errorMap.size() == 0 && book.getSaldoIn() == bank.getSaldoIn() && book.getSaldoUt() == bank.getSaldoUt()) {
+            System.out.println("Good job! All the numbers match :D");
+        } else {
+            System.out.println("Book in: " + book.getSaldoIn() + "\t\t" + "Book ut: " + book.getSaldoUt());
+            System.out.println("Bank in: " + bank.getSaldoIn() + "\t\t" + "Bank ut: " + bank.getSaldoUt());
+            printErrors(errorMap);
+            System.out.println("All the numbers don't match. Look at the things printed above.");
+        }
+    }
+
+    private static void printErrors(HashMap errorMap) {
+        // TODO: Print errors
+        System.out.println(errorMap.toString());
+        /*System.out.println("Day " + date + " DOES NOT MATCH");
+        for (Item item : items) {
+            System.out.println("\t" + item);
+        }
+        for (Item item : tBankDay.getItems()) {
+            System.out.println("\t" + item);
+        }*/
     }
 
     public static double round(double value, int places) {
