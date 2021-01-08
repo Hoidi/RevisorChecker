@@ -47,21 +47,9 @@ public class Rev {
         } else {
             System.out.println("Book in: " + book.getSaldoIn() + "\t\t" + "Book ut: " + book.getSaldoUt());
             System.out.println("Bank in: " + bank.getSaldoIn() + "\t\t" + "Bank ut: " + bank.getSaldoUt());
-            printErrors(errorMap);
+            errorMap.forEach((k, v) -> System.out.println(v.toString()));
             System.out.println("All the numbers don't match. Look at the things printed above.");
         }
-    }
-
-    private static void printErrors(HashMap errorMap) {
-        // TODO: Print errors
-        System.out.println(errorMap.toString());
-        /*System.out.println("Day " + date + " DOES NOT MATCH");
-        for (Item item : items) {
-            System.out.println("\t" + item);
-        }
-        for (Item item : tBankDay.getItems()) {
-            System.out.println("\t" + item);
-        }*/
     }
 
     public static double round(double value, int places) {

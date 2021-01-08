@@ -44,6 +44,9 @@ public class ItemHolder<T extends Item> {
         HashMap<String,BankDay<T>> errorMap = new HashMap<>();
 
         for (Map.Entry<String, BankDay<T>> set : bankDays.entrySet()) {
+            if (set.getValue().getDate().equals("190918")) {
+                System.out.println("error");
+            }
             if (!bItemHolder.bankDays.containsKey(set.getValue().getDate())) {
                 errorMap.put(set.getKey(),set.getValue());
             } else {
@@ -53,7 +56,9 @@ public class ItemHolder<T extends Item> {
                     System.out.println("Day " + set.getKey() + " is good");
                 } else {
                     a.getItems().addAll(b.getItems());
-                    errorMap.put(set.getKey(),a);
+                    if (a.getItems().size() > 0) {
+                        errorMap.put(set.getKey(), a);
+                    }
                 }
             }
         }

@@ -99,7 +99,6 @@ public class BankDay<T extends Item> {
         return false;
     }
 
-
     private Set<Set<T>> powerSet(Set<T> originalSet) {
         Set<Set<T>> sets = new HashSet<Set<T>>();
         if (originalSet.isEmpty()) {
@@ -117,5 +116,20 @@ public class BankDay<T extends Item> {
             sets.add(set);
         }
         return sets;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("---------------------------------  ");
+        sb.append("Day: ").append(date).append(" had some errors");
+
+        for (Item i : items) {
+            sb.append(i.toString());
+        }
+
+        sb.append("  ---------------------------------\n");
+
+        return sb.toString();
     }
 }
