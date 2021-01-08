@@ -38,6 +38,7 @@ public class Item implements Comparable<Item> {
         sb.append(debet).append("\t");
         sb.append(kredit).append("\t\t");
         sb.append(comment).append("\t");
+        sb.append("\n");
 
         return sb.toString();
     }

@@ -15,16 +15,23 @@ public class Rev {
 
         PDDocument pd = null;
         try {
-            pd = PDDocument.load(new File("./src/main/resources/test_bok_frITid.pdf"));
+            pd = PDDocument.load(new File("./src/main/resources/test_bok_sexIT1.pdf"));
             if (!pd.isEncrypted()) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 String text = stripper.getText(pd);
 
+                // TODO: Add multipage support for bookkeeping
+                /*pd = PDDocument.load(new File("./src/main/resources/test_bok_sexIT2.pdf"));
+                if (!pd.isEncrypted()) {
+                    PDFTextStripper stripper2 = new PDFTextStripper();
+                    text += stripper2.getText(pd);
+                    System.out.println(text);
+                }*/
                 book = BookParser.createBookBank(text);
             }
             pd.close();
 
-            pd = PDDocument.load(new File("./src/main/resources/test_bank_frITid.pdf"));
+            pd = PDDocument.load(new File("./src/main/resources/test_bank_sexIT.pdf"));
             if (!pd.isEncrypted()) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 String text = stripper.getText(pd);

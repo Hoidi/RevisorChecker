@@ -123,12 +123,13 @@ public class BankDay<T extends Item> {
         StringBuilder sb = new StringBuilder();
         sb.append("---------------------------------  ");
         sb.append("Day: ").append(date).append(" had some errors");
-
+        sb.append("  ---------------------------------\n");
         for (Item i : items) {
             sb.append(i.toString());
         }
 
-        sb.append("  ---------------------------------\n");
+        sb.append("\n");
+
 
         return sb.toString();
     }
