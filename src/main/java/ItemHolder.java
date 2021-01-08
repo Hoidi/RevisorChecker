@@ -43,21 +43,21 @@ public class ItemHolder<T extends Item> {
     public HashMap<String,BankDay<T>> equals(ItemHolder<T> bItemHolder) {
         HashMap<String,BankDay<T>> errorMap = new HashMap<>();
 
-        for (Map.Entry<String, BankDay<T>> set : bankDays.entrySet()) {
-            if (set.getValue().getDate().equals("190918")) {
-                System.out.println("error");
-            }
-            if (!bItemHolder.bankDays.containsKey(set.getValue().getDate())) {
-                errorMap.put(set.getKey(),set.getValue());
+        List<BankDay> list = new ArrayList<BankDay>(bankDays.values());
+        Collections.sort(list);
+
+        for (BankDay day : list) {
+            if (!bItemHolder.bankDays.containsKey(day.getDate())) {
+                errorMap.put(day.getDate(),day);
             } else {
-                BankDay<T> a = set.getValue();
-                BankDay<T> b = bItemHolder.getDay(set.getKey());
+                BankDay<T> a = day;
+                BankDay<T> b = bItemHolder.getDay(day.getDate());
                 if (a.equals(b)) {
-                    System.out.println("Day " + set.getKey() + " is good");
+                    System.out.println("Day " + day.getDate() + " is good");
                 } else {
                     a.getItems().addAll(b.getItems());
                     if (a.getItems().size() > 0) {
-                        errorMap.put(set.getKey(), a);
+                        errorMap.put(day.getDate(), a);
                     }
                 }
             }

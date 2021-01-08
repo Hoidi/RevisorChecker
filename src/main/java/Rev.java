@@ -63,7 +63,13 @@ public class Rev {
         } else {
             System.out.println("Book in: " + book.getSaldoIn() + "\t\t" + "Book ut: " + book.getSaldoUt());
             System.out.println("Bank in: " + bank.getSaldoIn() + "\t\t" + "Bank ut: " + bank.getSaldoUt());
-            errorMap.forEach((k, v) -> System.out.println(v.toString()));
+
+            List<BankDay> list = new ArrayList<BankDay>(errorMap.values());
+
+            list.forEach((v) -> System.out.println(
+                    "---------------------------------  Day: " + v.getDate() +
+                    " had some errors  ---------------------------------\n" +
+                    v.toString()));
             System.out.println("All the numbers don't match. Look at the things printed above.");
         }
     }

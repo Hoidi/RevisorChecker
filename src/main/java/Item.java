@@ -1,5 +1,3 @@
-import java.util.Objects;
-
 public class Item implements Comparable<Item> {
 
     private final String date;

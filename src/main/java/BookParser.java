@@ -32,7 +32,6 @@ public class BookParser {
     }
 
     public static ItemHolder createBookBank(ArrayList<ArrayList<String>> lines) {
-        //ArrayList<ArrayList<String>> lines = getLinesBook(text);
         lines.remove(0);
         double saldoIn = getSaldoIn(lines.remove(0));
         double saldoUt = getSaldoOut(lines.remove(lines.size()-1));

@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class BankDay<T extends Item> {
+public class BankDay<T extends Item> implements Comparable<BankDay<T>> {
 
     private final String date;
 
@@ -121,16 +121,16 @@ public class BankDay<T extends Item> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("---------------------------------  ");
-        sb.append("Day: ").append(date).append(" had some errors");
-        sb.append("  ---------------------------------\n");
         for (Item i : items) {
             sb.append(i.toString());
         }
-
         sb.append("\n");
 
-
         return sb.toString();
+    }
+
+    @Override
+    public int compareTo(BankDay<T> tBankDay) {
+        return Integer.parseInt(date)-Integer.parseInt(tBankDay.date);
     }
 }
