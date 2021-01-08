@@ -4,8 +4,7 @@ import java.util.Collections;
 
 public class BookParser {
 
-    private static ArrayList<ArrayList<String>> getLinesBook(String text) {
-        // TODO: Fix multi-page bookkeeping
+    public static ArrayList<ArrayList<String>> getLinesBook(String text) {
         ArrayList<String> tmpLines = new ArrayList<>(Arrays.asList(text.split("\\r?\\n")));
         ArrayList<ArrayList<String>> lines = new ArrayList<>();
 
@@ -32,15 +31,14 @@ public class BookParser {
         return lines;
     }
 
-    public static ItemHolder createBookBank(String text) {
-        ArrayList<ArrayList<String>> lines = getLinesBook(text);
-
+    public static ItemHolder createBookBank(ArrayList<ArrayList<String>> lines) {
+        //ArrayList<ArrayList<String>> lines = getLinesBook(text);
+        lines.remove(0);
         double saldoIn = getSaldoIn(lines.remove(0));
         double saldoUt = getSaldoOut(lines.remove(lines.size()-1));
 
         ItemHolder bookBank = new ItemHolder<BookItem>(saldoIn,saldoUt);
 
-        lines.remove(0);
         lines.remove(lines.size()-1);
 
         Rev.MyDouble lastSaldo = new Rev.MyDouble(saldoIn);
@@ -161,6 +159,24 @@ public class BookParser {
             s.remove(0);
         }
         String saldo = String.join("", s);
+        saldo = saldo.substring(saldo.indexOf(",")+1);
+        saldo = saldo.substring(saldo.indexOf(",")+1);
+        saldo = saldo.substring(2);
+
         return Double.parseDouble(saldo.replace(",","."));
+    }
+
+    public static ItemHolder createBookBank(String text1, String text2) {
+        ArrayList<ArrayList<String>> arr1 = getLinesBook(text1);
+        ArrayList<ArrayList<String>> arr2 = getLinesBook(text2);
+
+        arr1.remove(arr1.size()-1);
+        arr1.remove(arr1.size()-1);
+
+        arr2.remove(0);
+        arr2.remove(0);
+        arr1.addAll(arr2);
+
+        return createBookBank(arr1);
     }
 }
