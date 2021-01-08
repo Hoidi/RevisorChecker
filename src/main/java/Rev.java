@@ -15,7 +15,7 @@ public class Rev {
 
         PDDocument pd = null;
         try {
-            pd = PDDocument.load(new File("./src/main/resources/test_bok.pdf"));
+            pd = PDDocument.load(new File("./src/main/resources/test_bok_frITid.pdf"));
             if (!pd.isEncrypted()) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 String text = stripper.getText(pd);
@@ -24,7 +24,7 @@ public class Rev {
             }
             pd.close();
 
-            pd = PDDocument.load(new File("./src/main/resources/test_bank.pdf"));
+            pd = PDDocument.load(new File("./src/main/resources/test_bank_frITid.pdf"));
             if (!pd.isEncrypted()) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 String text = stripper.getText(pd);
