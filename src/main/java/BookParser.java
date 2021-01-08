@@ -17,6 +17,16 @@ public class BookParser {
             lines.remove(0); // remove first trash
         }
 
+        // removes the first few lines on each page
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).get(0).equals("Teknologsektionen")) {
+                lines.remove(i-- -1); // remove page number
+                for (int x = 0; x < 11; x++) {
+                    lines.remove(i);
+                }
+            }
+        }
+
         lines.remove(lines.size()-1); // remove last trash
 
         return lines;
