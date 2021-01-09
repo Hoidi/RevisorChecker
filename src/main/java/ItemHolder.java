@@ -49,10 +49,10 @@ public class ItemHolder<T extends Item> {
     public HashMap<String,BankDay<T>> equals(ItemHolder<T> bItemHolder) {
         HashMap<String,BankDay<T>> errorMap = new HashMap<>();
 
-        List<BankDay> list = new ArrayList<BankDay>(bankDays.values());
+        List<BankDay<T>> list = new ArrayList<>(bankDays.values());
         Collections.sort(list);
 
-        for (BankDay day : list) {
+        for (BankDay<T> day : list) {
             if (!bItemHolder.bankDays.containsKey(day.getDate())) {
                 errorMap.put(day.getDate(),day);
             } else {

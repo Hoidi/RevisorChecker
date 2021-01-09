@@ -8,13 +8,12 @@ public class BookParser {
         ArrayList<String> tmpLines = new ArrayList<>(Arrays.asList(text.split("\\r?\\n")));
         ArrayList<ArrayList<String>> lines = new ArrayList<>();
 
-        for (int i = 0; i < tmpLines.size(); i++) {
-            lines.add(new ArrayList<>(Arrays.asList(tmpLines.get(i).split("\\s"))));
+        for (String tmpLine : tmpLines) {
+            lines.add(new ArrayList<>(Arrays.asList(tmpLine.split("\\s"))));
         }
 
-        for (int i = 0; i < 4; i++) {
-            lines.remove(0); // remove first few lines
-        }
+        // remove first few lines
+        lines.subList(0, 4).clear();
 
         for (int i = 0; i < 9; i++) {
             lines.remove(1); // keeps the period date line (at index 0)
@@ -35,13 +34,13 @@ public class BookParser {
         return lines;
     }
 
-    public static ItemHolder createBookBank(ArrayList<ArrayList<String>> lines) {
+    public static ItemHolder<BookItem> createBookBank(ArrayList<ArrayList<String>> lines) {
         String fromDate = lines.remove(0).get(1).substring(2).replace("-","");
         double saldoIn = getSaldoIn(lines.remove(0));
         double saldoUt = getSaldoOut(lines.remove(lines.size()-1));
 
 
-        ItemHolder bookBank = new ItemHolder<BookItem>(saldoIn,saldoUt,fromDate);
+        ItemHolder<BookItem> bookBank = new ItemHolder<>(saldoIn, saldoUt, fromDate);
 
         lines.remove(lines.size()-1);
 
@@ -147,9 +146,7 @@ public class BookParser {
     }
 
     private static double getSaldoOut(ArrayList<String> s) {
-        for (int i = 0; i < 5; i++) {
-            s.remove(0);
-        }
+        s.subList(0, 5).clear();
         String saldo = String.join("", s);
         saldo = saldo.substring(saldo.indexOf(",")+1);
         saldo = saldo.substring(saldo.indexOf(",")+1);
@@ -170,7 +167,7 @@ public class BookParser {
         return Double.parseDouble(saldo.replace(",","."));
     }
 
-    public static ItemHolder createBookBank(String text1, String text2) {
+    public static ItemHolder<BookItem> createBookBank(String text1, String text2) {
         ArrayList<ArrayList<String>> arr1 = getLinesBook(text1);
         ArrayList<ArrayList<String>> arr2 = getLinesBook(text2);
 
@@ -179,7 +176,7 @@ public class BookParser {
 
         arr2.remove(0);
         arr2.remove(0);
-        arr2.remove(0); // TODO: Double check that the period date is gone and nothing else
+        arr2.remove(0);
         arr1.addAll(arr2);
 
         return createBookBank(arr1);
