@@ -4,12 +4,14 @@ public class ItemHolder<T extends Item> {
 
     private final double saldoIn;
     private final double saldoUt;
+    private final String fromDate;
 
     HashMap<String,BankDay<T>> bankDays = new HashMap<>();
 
-    public ItemHolder(double saldoIn, double saldoUt) {
+    public ItemHolder(double saldoIn, double saldoUt,String fromDate) {
         this.saldoIn = saldoIn;
         this.saldoUt = saldoUt;
+        this.fromDate = fromDate;
     }
 
     public double getSaldoIn() {
@@ -18,6 +20,10 @@ public class ItemHolder<T extends Item> {
 
     public double getSaldoUt() {
         return saldoUt;
+    }
+
+    public String getFromDate() {
+        return fromDate;
     }
 
     void addItem(T item) {

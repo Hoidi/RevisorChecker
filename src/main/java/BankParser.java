@@ -4,7 +4,7 @@ import java.util.Collections;
 
 public class BankParser {
 
-    public static ArrayList<ArrayList<String>> getLinesBank(String text) {
+    public static ArrayList<ArrayList<String>> getLinesBank(String text, String fromDate) {
         ArrayList<String> tmpLines = new ArrayList<>(Arrays.asList(text.split("\\r?\\n")));
         ArrayList<ArrayList<String>> lines = new ArrayList<>();
 
@@ -26,29 +26,83 @@ public class BankParser {
 
         lines.remove(lines.size()-1); // another hidden "(3)"
 
+        // remove all things that happened before the book keeping date
+        for (int i = 1; i < lines.size(); i++) {
+            if (Integer.parseInt(fromDate) > Integer.parseInt(lines.get(1).get(0))) {
+                lines.remove(1);
+            } else {
+                // TODO: Could keep the else only
+                if (i == 1) { // if no lines were removed
+                    lines.get(0).remove(0);
+                    lines.get(0).remove(0);
+                    lines.get(0).remove(0);
+                    String saldo = String.join("",lines.get(0));
+                    lines.get(0).clear();
+                    lines.get(0).add(saldo);
+                } else {
+                    lines.remove(0);
+                    ArrayList<String> firstLine = new ArrayList<>(lines.get(0));
+                    lines.get(0).remove(0);
+                    lines.get(0).remove(0);
+                    lines.get(0).remove(0);
+                    String oldStr = String.join(" ", lines.get(0));
+                    double old = Double.parseDouble(oldStr.
+                            substring(oldStr.lastIndexOf(",", oldStr.lastIndexOf(",") - 1)).
+                            substring(4).
+                            replace(" ","").
+                            replace(",","."));
+                    // TODO: Fix this
+                    if (old < 1000.0) {
+                        lines.get(0).remove(lines.get(0).size()-1);
+                    } else if (old < 1000000.0) {
+                        lines.get(0).remove(lines.get(0).size()-1);
+                        lines.get(0).remove(lines.get(0).size()-1);
+                    } else if (old < 1000000000.0) {
+                        lines.get(0).remove(lines.get(0).size()-1);
+                        lines.get(0).remove(lines.get(0).size()-1);
+                        lines.get(0).remove(lines.get(0).size()-1);
+                    }
+                    ArrayList<String> tmp = new ArrayList<>();
+                    while (isNumeric(lines.get(0).get(lines.get(0).size()-1).replace(",","."))) {
+                        tmp.add(lines.get(0).remove(lines.get(0).size()-1));
+                    }
+                    Collections.reverse(tmp);
+                    double diff = Double.parseDouble(String.join("",tmp).replace(",","."));
+                    String realSaldo = Double.toString(Rev.round(old - diff,2)).replace(".",",");
+                    lines.get(0).clear();
+                    lines.get(0).add(0,realSaldo);
+                    lines.add(1,firstLine);
+                }
+                break;
+            }
+        }
         return lines;
     }
 
-    public static ItemHolder createBankBank(String text) {
-        ArrayList<ArrayList<String>> lines = BankParser.getLinesBank(text);
+    public static boolean isNumeric(String str) {
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch(NumberFormatException e){
+            return false;
+        }
+    }
 
-        lines.get(0).remove(0);
-        lines.get(0).remove(0);
-        lines.get(0).remove(0);
-        double saldoIn = Double.parseDouble(String.join("",lines.get(0)).replace(",","."));
-        lines.remove(0);
+    public static ItemHolder createBankBank(String text, String fromDate) {
+        ArrayList<ArrayList<String>> lines = BankParser.getLinesBank(text,fromDate);
+
+        double saldoIn = Double.parseDouble(String.join("",lines.remove(0)).replace(",","."));
 
         lines.get(lines.size()-1).remove(0);
         lines.get(lines.size()-1).remove(0);
-        double saldoUt = Double.parseDouble(String.join("",lines.get(lines.size()-1)).replace(",","."));
-        lines.remove(lines.size()-1);
+        double saldoUt = Double.parseDouble(String.join("",lines.remove(lines.size()-1)).replace(",","."));
 
-        ItemHolder bankBank = new ItemHolder<Item>(saldoIn,saldoUt);
+        ItemHolder bankBank = new ItemHolder<Item>(saldoIn,saldoUt,fromDate);
 
         Rev.MyDouble lastSaldo = new Rev.MyDouble(saldoIn);
 
         for (ArrayList<String> s : lines) {
-            Item b = BankParser.createBankItem(s,lastSaldo);
+            Item b = createBankItem(s,lastSaldo);
             bankBank.addItem(b);
         }
 

@@ -78,7 +78,7 @@ public class Rev {
             if (!pd.isEncrypted()) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 String text = stripper.getText(pd);
-                bank = BankParser.createBankBank(text);
+                bank = BankParser.createBankBank(text, book.getFromDate());
             }
             pd.close();
         } catch (IOException e) {
@@ -108,7 +108,7 @@ public class Rev {
             if (!pd.isEncrypted()) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 String text = stripper.getText(pd);
-                bank = BankParser.createBankBank(text);
+                bank = BankParser.createBankBank(text,book.getFromDate());
             }
             pd.close();
         } catch (IOException e) {

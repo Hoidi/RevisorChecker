@@ -12,8 +12,12 @@ public class BookParser {
             lines.add(new ArrayList<>(Arrays.asList(tmpLines.get(i).split("\\s"))));
         }
 
-        for (int i = 0; i < 13; i++) {
-            lines.remove(0); // remove first trash
+        for (int i = 0; i < 4; i++) {
+            lines.remove(0); // remove first few lines
+        }
+
+        for (int i = 0; i < 9; i++) {
+            lines.remove(1); // keeps the period date line (at index 0)
         }
 
         // removes the first few lines on each page
@@ -32,11 +36,12 @@ public class BookParser {
     }
 
     public static ItemHolder createBookBank(ArrayList<ArrayList<String>> lines) {
-        lines.remove(0);
+        String fromDate = lines.remove(0).get(1).substring(2).replace("-","");
         double saldoIn = getSaldoIn(lines.remove(0));
         double saldoUt = getSaldoOut(lines.remove(lines.size()-1));
 
-        ItemHolder bookBank = new ItemHolder<BookItem>(saldoIn,saldoUt);
+
+        ItemHolder bookBank = new ItemHolder<BookItem>(saldoIn,saldoUt,fromDate);
 
         lines.remove(lines.size()-1);
 
@@ -174,6 +179,7 @@ public class BookParser {
 
         arr2.remove(0);
         arr2.remove(0);
+        arr2.remove(0); // TODO: Double check that the period date is gone and nothing else
         arr1.addAll(arr2);
 
         return createBookBank(arr1);
