@@ -89,8 +89,6 @@ public class Rev {
     }
 
     private static void regularCheck(String bankPath, String bookPath) {
-        //TODO: Fix with dates - remove things from bank that is earlier than the date the bookkeeping was exported
-
         ItemHolder book = null;
         ItemHolder bank = null;
 
