@@ -88,7 +88,7 @@ public class BankParser {
         }
     }
 
-    public static ItemHolder createBankBank(String text, String fromDate) {
+    public static ItemHolder<Item> createBankBank(String text, String fromDate) {
         ArrayList<ArrayList<String>> lines = BankParser.getLinesBank(text,fromDate);
 
         double saldoIn = Double.parseDouble(String.join("",lines.remove(0)).replace(",","."));
@@ -97,7 +97,7 @@ public class BankParser {
         lines.get(lines.size()-1).remove(0);
         double saldoUt = Double.parseDouble(String.join("",lines.remove(lines.size()-1)).replace(",","."));
 
-        ItemHolder bankBank = new ItemHolder<Item>(saldoIn,saldoUt,fromDate);
+        ItemHolder<Item> bankBank = new ItemHolder<Item>(saldoIn,saldoUt,fromDate);
 
         Rev.MyDouble lastSaldo = new Rev.MyDouble(saldoIn);
 
