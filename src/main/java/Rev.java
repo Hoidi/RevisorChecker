@@ -10,45 +10,107 @@ import java.util.*;
 
 public class Rev {
     public static void main(String[] args)  {
+        boolean ansvar = switch (args[0]) {
+            case "a" -> true;
+            case "r", "." -> false;
+            default -> throw new RuntimeException("Wrong first input");
+        };
+
+        boolean twoDocs = switch (args[1]) {
+            case "t" -> true;
+            case "o", "." -> false;
+            default -> throw new RuntimeException("Wrong second input");
+        };
+
+        if (ansvar) {
+            if (twoDocs) {
+                responsibilityCheck(args[2], args[3], args[4], args[5], args[6]);
+            } else {
+                responsibilityCheck(args[2], args[3], args[4]);
+            }
+        } else {
+            if (twoDocs) {
+                regularCheck(args[2], args[3], args[4]);
+            } else {
+                regularCheck(args[2], args[3]);
+            }
+        }
+    }
+
+    private static void responsibilityCheck(String bankPath, String bookPath1, String bookPath2, String thingPath1, String thingPath2) {
+        regularCheck(bankPath, bookPath1, bookPath2);
+        // TODO: Check policies
+    }
+
+    private static void responsibilityCheck(String bankPath, String bookPath, String thingPath) {
+        regularCheck(bankPath, bookPath);
+        //TODO: Check policies
+    }
+
+    private static void regularCheck(String bankPath, String bookPath1, String bookPath2) {
+        //TODO: Fix with dates - remove things from bank that is earlier than the date the bookkeeping was exported
+
         ItemHolder book = null;
         ItemHolder bank = null;
 
         PDDocument pd = null;
         try {
-            pd = PDDocument.load(new File("./src/main/resources/test_bok_sexIT1.pdf"));
+            String text1 = "";
+            String text2 = "";
+
+            pd = PDDocument.load(new File(bookPath1));
             if (!pd.isEncrypted()) {
                 PDFTextStripper stripper = new PDFTextStripper();
-                String text = stripper.getText(pd);
-
-                boolean twoPages = true;
-
-                if (twoPages) {
-                    // TODO: Add multipage support for bookkeeping
-                    PDDocument pd2 = PDDocument.load(new File("./src/main/resources/test_bok_sexIT2.pdf"));
-                    String text2 = "";
-                    if (!pd.isEncrypted()) {
-                        PDFTextStripper stripper2 = new PDFTextStripper();
-                        text2 = stripper2.getText(pd2);
-                        BookParser.getLinesBook(text2);
-                    }
-                    pd2.close();
-                    book = BookParser.createBookBank(text,text2);
-                } else {
-                    book = BookParser.createBookBank(BookParser.getLinesBook(text));
-                }
-
+                text1 = stripper.getText(pd);
             }
             pd.close();
 
-            pd = PDDocument.load(new File("./src/main/resources/test_bank_sexIT.pdf"));
+            pd = PDDocument.load(new File(bookPath2));
+            if (!pd.isEncrypted()) {
+                PDFTextStripper stripper = new PDFTextStripper();
+                text2 = stripper.getText(pd);
+                BookParser.getLinesBook(text2);
+            }
+            pd.close();
+            book = BookParser.createBookBank(text1,text2);
+
+            pd = PDDocument.load(new File(bankPath));
             if (!pd.isEncrypted()) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 String text = stripper.getText(pd);
-
                 bank = BankParser.createBankBank(text);
             }
             pd.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        evaluateBookkeeping(book,bank);
+    }
+
+    private static void regularCheck(String bankPath, String bookPath) {
+        //TODO: Fix with dates - remove things from bank that is earlier than the date the bookkeeping was exported
+
+        ItemHolder book = null;
+        ItemHolder bank = null;
+
+        PDDocument pd = null;
+        try {
+            pd = PDDocument.load(new File(bookPath));
+            if (!pd.isEncrypted()) {
+                PDFTextStripper stripper = new PDFTextStripper();
+                String text = stripper.getText(pd);
+                book = BookParser.createBookBank(BookParser.getLinesBook(text));
+            }
+            pd.close();
+
+            pd = PDDocument.load(new File(bankPath));
+            if (!pd.isEncrypted()) {
+                PDFTextStripper stripper = new PDFTextStripper();
+                String text = stripper.getText(pd);
+                bank = BankParser.createBankBank(text);
+            }
+            pd.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
