@@ -7,6 +7,9 @@ The purpose of this program is to automate as much of the auditors work as possi
 
     r - regular check
     a - "ansvarsbefrielse" check
+    
+    o - one file
+    t - two files
 
 followed by
 
