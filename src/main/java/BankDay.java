@@ -26,6 +26,22 @@ public class BankDay<T extends Item> implements Comparable<BankDay<T>> {
         }
     }
 
+    public double getKreditSum() {
+        double sum = 0.0;
+        for (T i : items) {
+            sum += i.getKredit();
+        }
+        return Rev.round(sum,2);
+    }
+
+    public double getDebetSum() {
+        double sum = 0.0;
+        for (T i : items) {
+            sum += i.getDebet();
+        }
+        return Rev.round(sum,2);
+    }
+
     public boolean equals(BankDay<T> tBankDay) {
         // this method removes the items from the list but it shouldn't be a problem
         Collections.sort(items);

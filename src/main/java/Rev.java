@@ -22,11 +22,13 @@ public class Rev {
             default -> throw new RuntimeException("Wrong second input");
         };
 
+        int numberOfMembers = 8;
+
         if (ansvar) {
             if (twoDocs) {
-                responsibilityCheck(args[2], args[3], args[4], args[5], args[6]);
+                responsibilityCheck(args[2], args[3], args[4], args[5], args[6], numberOfMembers);
             } else {
-                responsibilityCheck(args[2], args[3], args[4]);
+                responsibilityCheck(args[2], args[3], args[4], numberOfMembers);
             }
         } else {
             if (twoDocs) {
@@ -37,19 +39,71 @@ public class Rev {
         }
     }
 
-    private static void responsibilityCheck(String bankPath, String bookPath1, String bookPath2, String thingPath1, String thingPath2) {
+    private static void responsibilityCheck(String bankPath, String bookPath1, String bookPath2, String ledgerPath1, String ledgerPath2, int numberOfMembers) {
         regularCheck(bankPath, bookPath1, bookPath2);
-        // TODO: Check policies
+        ledgerCheck(ledgerPath1,ledgerPath2, numberOfMembers);
     }
 
-    private static void responsibilityCheck(String bankPath, String bookPath, String thingPath) {
+    private static void responsibilityCheck(String bankPath, String bookPath, String ledgerPath, int numberOfMembers) {
         regularCheck(bankPath, bookPath);
-        //TODO: Check policies
+        ledgerCheck(ledgerPath,numberOfMembers);
+    }
+
+    private static void ledgerCheck(String ledgerPath1, String ledgerPath2, int numberOfMembers) {
+        Ledger ledger = null;
+
+        PDDocument pd = null;
+        try {
+            String text1 = "";
+            String text2 = "";
+
+            pd = PDDocument.load(new File(ledgerPath1));
+            if (!pd.isEncrypted()) {
+                PDFTextStripper stripper = new PDFTextStripper();
+                text1 = stripper.getText(pd);
+            }
+            pd.close();
+
+            pd = PDDocument.load(new File(ledgerPath2));
+            if (!pd.isEncrypted()) {
+                PDFTextStripper stripper = new PDFTextStripper();
+                text2 = stripper.getText(pd);
+                BookParser.getLinesBook(text2);
+            }
+            pd.close();
+            ledger = LedgerParser.createLedger(text1,text2,numberOfMembers);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        evaluateLedger(ledger);
+    }
+
+    private static void ledgerCheck(String ledgerPath, int numberOfMembers) {
+        Ledger ledger = null;
+
+        PDDocument pd = null;
+        try {
+            pd = PDDocument.load(new File(ledgerPath));
+            if (!pd.isEncrypted()) {
+                PDFTextStripper stripper = new PDFTextStripper();
+                String text = stripper.getText(pd);
+                ledger = LedgerParser.createLedger(LedgerParser.getLinesLedger(text),numberOfMembers);
+            }
+            pd.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        evaluateLedger(ledger);
+    }
+
+    private static void evaluateLedger(Ledger ledger) {
+        // TODO
     }
 
     private static void regularCheck(String bankPath, String bookPath1, String bookPath2) {
-        //TODO: Fix with dates - remove things from bank that is earlier than the date the bookkeeping was exported
-
         ItemHolder book = null;
         ItemHolder bank = null;
 
