@@ -176,7 +176,6 @@ public class BookParser {
 
         arr2.remove(0);
         arr2.remove(0);
-        arr2.remove(0);
         arr1.addAll(arr2);
 
         return createBookBank(arr1);
