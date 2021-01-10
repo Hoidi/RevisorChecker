@@ -1,5 +1,5 @@
 
-# RevisorChecker (WIP - not final)
+# RevisorChecker
 
 The purpose of this program is to automate as much of the auditors work as possible
 
@@ -12,7 +12,7 @@ followed by
 
     bank.pdf analisys.pdf (analisys2.pdf) ledger.pdf (ledger2.pdf)
 
-#### Examples of arguments to run ("pre-release"):
+#### Examples of arguments to run
 A check that is only for one bookkeeping year:
 
     o path/to/banking.pdf path/to/analysis.pdf path/to/ledger.pdf
