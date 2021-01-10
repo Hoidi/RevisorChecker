@@ -10,13 +10,7 @@ import java.util.*;
 
 public class Rev {
     public static void main(String[] args)  {
-        boolean ansvar = switch (args[0]) {
-            case "a" -> true;
-            case "r", "." -> false;
-            default -> throw new RuntimeException("Wrong first input");
-        };
-
-        boolean twoDocs = switch (args[1]) {
+        boolean twoDocs = switch (args[0]) {
             case "t" -> true;
             case "o", "." -> false;
             default -> throw new RuntimeException("Wrong second input");
@@ -25,28 +19,20 @@ public class Rev {
         int numberOfMembers = 8;
         int numberOfMembersAndLastMembers = 16;
 
-        if (ansvar) {
-            if (twoDocs) {
-                responsibilityCheck(args[2], args[3], args[4], args[5], args[6], numberOfMembers, numberOfMembersAndLastMembers);
-            } else {
-                responsibilityCheck(args[2], args[3], args[4], numberOfMembers, numberOfMembersAndLastMembers);
-            }
+        if (twoDocs) {
+            bookkeepingCheck(args[1], args[2], args[3], args[4], args[5], numberOfMembers, numberOfMembersAndLastMembers);
         } else {
-            if (twoDocs) {
-                regularCheck(args[2], args[3], args[4]);
-            } else {
-                regularCheck(args[2], args[3]);
-            }
+            bookkeepingCheck(args[1], args[2], args[3], numberOfMembers, numberOfMembersAndLastMembers);
         }
     }
 
-    private static void responsibilityCheck(String bankPath, String bookPath1, String bookPath2, String ledgerPath1, String ledgerPath2, int numberOfMembers, int numberOfMembersAndLastMembers) {
-        regularCheck(bankPath, bookPath1, bookPath2);
+    private static void bookkeepingCheck(String bankPath, String bookPath1, String bookPath2, String ledgerPath1, String ledgerPath2, int numberOfMembers, int numberOfMembersAndLastMembers) {
+        bankCheck(bankPath, bookPath1, bookPath2);
         ledgerCheck(ledgerPath1,ledgerPath2, numberOfMembers,numberOfMembersAndLastMembers);
     }
 
-    private static void responsibilityCheck(String bankPath, String bookPath, String ledgerPath, int numberOfMembers, int numberOfMembersAndLastMembers) {
-        regularCheck(bankPath, bookPath);
+    private static void bookkeepingCheck(String bankPath, String bookPath, String ledgerPath, int numberOfMembers, int numberOfMembersAndLastMembers) {
+        bankCheck(bankPath, bookPath);
         ledgerCheck(ledgerPath,numberOfMembers,numberOfMembersAndLastMembers);
     }
 
@@ -98,22 +84,6 @@ public class Rev {
         }
 
         evaluateLedger(ledger);
-    }
-
-    private static void checkDebAndKred(Ledger ledger, StringBuilder sb, int account, String name) {
-        if (ledger.accounts.containsKey(account)) {
-            double kredit = ledger.getKredit(account);
-            double debet = ledger.getKredit(account);
-            if (kredit == debet) {
-                sb.append("Total debet: \t").append(debet).append(" kr\n");
-                sb.append("Total kredit: \t").append(kredit).append(" kr\n");
-                sb.append(name).append(" was cleared.\n");
-            } else {
-                sb.append(name).append(" debet and kredit was no the same\n");
-                sb.append("Debet: \t\t").append(ledger.getDebet(account)).append("\n");
-                sb.append("Kredit: \t\t").append(ledger.getDebet(account)).append("\n");
-            }
-        }
     }
 
     private static void evaluateLedger(Ledger ledger) {
@@ -236,11 +206,27 @@ public class Rev {
                 sb.append("Aspning was cleared.\n");
             }
         }
-        
+
         System.out.println(sb.toString());
     }
 
-    private static void regularCheck(String bankPath, String bookPath1, String bookPath2) {
+    private static void checkDebAndKred(Ledger ledger, StringBuilder sb, int account, String name) {
+        if (ledger.accounts.containsKey(account)) {
+            double kredit = ledger.getKredit(account);
+            double debet = ledger.getKredit(account);
+            if (kredit == debet) {
+                sb.append("Total debet: \t").append(debet).append(" kr\n");
+                sb.append("Total kredit: \t").append(kredit).append(" kr\n");
+                sb.append(name).append(" was cleared.\n");
+            } else {
+                sb.append(name).append(" debet and kredit was no the same\n");
+                sb.append("Debet: \t\t").append(ledger.getDebet(account)).append("\n");
+                sb.append("Kredit: \t\t").append(ledger.getDebet(account)).append("\n");
+            }
+        }
+    }
+
+    private static void bankCheck(String bankPath, String bookPath1, String bookPath2) {
         ItemHolder book = null;
         ItemHolder bank = null;
 
@@ -279,7 +265,7 @@ public class Rev {
         evaluateBookkeeping(book,bank);
     }
 
-    private static void regularCheck(String bankPath, String bookPath) {
+    private static void bankCheck(String bankPath, String bookPath) {
         ItemHolder book = null;
         ItemHolder bank = null;
 

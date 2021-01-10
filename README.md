@@ -4,30 +4,19 @@
 The purpose of this program is to automate as much of the auditors work as possible
 
 #### Commands
-
-    r - regular check
-    a - "ansvarsbefrielse" check
     
     o - one file
     t - two files
 
 followed by
 
-    bank.pdf analisys.pdf (analisys2.pdf) (ledger.pdf (ledger2.pdf))
-
+    bank.pdf analisys.pdf (analisys2.pdf) ledger.pdf (ledger2.pdf)
 
 #### Examples of arguments to run ("pre-release"):
-A regular check SP3:
+A check that is only for one bookkeeping year:
 
-    r o path/to/banking.pdf path/to/analysis.pdf
+    o path/to/banking.pdf path/to/analysis.pdf path/to/ledger.pdf
 
-If a regular check is over two bookkeeping years (SP1):
+If a check is over two bookkeeping years (SP1 or ansvarsbefrielse):
 
-    r t path/to/banking.pdf path/to/analysis1.pdf path/to/analysis2.pdf
-If check is done before a "ansvarsbefrielse" over one bookkeeping year
-
-    a o path/to/banking.pdf path/to/analysis.pdf path/to/ledger.pdf
-
-If check is done before a "ansvarsbefrielse" over two bookkeeping year
-
-    a t path/to/banking.pdf path/to/analysis2.pdf path/to/analysis2.pdf path/to/ledger1.pdf path/to/ledger2.pdf
+    t path/to/banking.pdf path/to/analysis1.pdf path/to/analysis2.pdf path/to/ledger1.pdf path/to/ledger2.pdf
