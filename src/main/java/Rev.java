@@ -102,7 +102,19 @@ public class Rev {
     private static void evaluateLedger(Ledger ledger) {
         StringBuilder sb = new StringBuilder();
         // TODO: Check fodringar (lots of account to all committees) (1510, 1617, etc)
-        // TODO: Check Leverantorsskulder (2240)
+
+        
+        sb.append("------------------------------- Leverantörsskulder -------------------------------\n");
+        if (ledger.accounts.containsKey(4510)) {
+            if (ledger.getKredit(4510) == ledger.getKredit(4510)) {
+                sb.append("Leverantörsskulder was cleared.\n");
+            } else {
+                sb.append("Leverantörsskulder debet and kredit was no the same\n");
+                sb.append("Debet: \t\t").append(ledger.getDebet(4510)).append("\n");
+                sb.append("Kredit: \t\t").append(ledger.getDebet(4510)).append("\n");
+            }
+        }
+
 
         // TODO intern reps - 4510
         sb.append("------------------------------- Intern reps -------------------------------\n");
