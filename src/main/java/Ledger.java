@@ -8,9 +8,12 @@ public class Ledger {
 
     // used to calculate the limits of the policies
     private final int numberOfMembers;
+    private final int numberOfMembersAndLastMembers;
 
-    public Ledger(int numberOfMembers) {
+
+    public Ledger(int numberOfMembers, int numberOfMembersAndLastMembers) {
         this.numberOfMembers = numberOfMembers;
+        this.numberOfMembersAndLastMembers = numberOfMembersAndLastMembers;
     }
 
     public double getKredit(int account) {
@@ -53,5 +56,9 @@ public class Ledger {
 
     public int getNumberOfMembers() {
         return numberOfMembers;
+    }
+
+    public int getNumberOfMembersAndLastMembers() {
+        return numberOfMembersAndLastMembers;
     }
 }
