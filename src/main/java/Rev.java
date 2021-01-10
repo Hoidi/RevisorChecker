@@ -100,7 +100,47 @@ public class Rev {
     }
 
     private static void evaluateLedger(Ledger ledger) {
-        // TODO
+        StringBuilder sb = new StringBuilder();
+        // TODO: Check fodringar (lots of account to all committees) (1510, 1617, etc)
+        // TODO: Check Leverantorsskulder (2240)
+
+        // TODO intern reps - 4510
+        sb.append("------------------------------- Intern reps -------------------------------\n");
+        if (ledger.accounts.containsKey(4510)) {
+            boolean status = true;
+            for (BankDay b : ledger.accounts.get(4510).values()) {
+                if (b.getDebetSum() > round(90 * ledger.getNumberOfMembers(),2)) {
+                    status = false;
+                    sb.append("Day ").append(b.getDate()).append(" went above policy of 90kr/person\n");
+                }
+            }
+            double totalDebet = ledger.getDebet(4510);
+            if (totalDebet > round(630 * ledger.getNumberOfMembers(),2)) {
+                status = false;
+                sb.append("Total intern reps went above policy of 630kr/person. Total was ").append(totalDebet).
+                        append("(allowed ").append(round(630 * ledger.getNumberOfMembers(),2)).append(")\n");
+            }
+            if (status) {
+                sb.append("Intern reps was cleared. But all calculations was done with the maximum people\n");
+            }
+        }
+
+        // TODO aspning - 4242
+        // 4243 	Kostnader Aspning PRIT
+        // 4244 	Kostnader Aspning sexIT
+        // 4245 	Kostnader Aspning NollKIT
+        // 4246 	Kostnader Aspning frITid
+        // 4247 	Kostnader Aspning armIT
+        // 4248 	Kostnader Aspning digIT
+        // 4254 	Kostnader Aspning Revisorer
+        // 4255 	Kostnader Aspning Dataskyddsombud
+
+        // TODO overlamning - 4241
+        // 4250 	Kostnader Overlamning Revisorer
+        // 4251 	Kostnader Overlamning Dataskyddsombud
+        // 4252 	Kostnader Overlamning Valberedning
+
+        System.out.println(sb.toString());
     }
 
     private static void regularCheck(String bankPath, String bookPath1, String bookPath2) {

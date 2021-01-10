@@ -38,16 +38,11 @@ public class LedgerParser {
         while (!lines.isEmpty()) {
             ArrayList<ArrayList<String>> accountLines = new ArrayList<>();
             int accountNumber = Integer.parseInt(lines.remove(0).get(0));
-            if (accountNumber == 3210) {
-                System.out.println("here");
-            }
             while (!lines.isEmpty() && lines.get(0).get(0).equals("")) {
                 accountLines.add(lines.remove(0));
             }
             ledger.addToAccount(accountNumber,createBookItems(accountLines));
         }
-
-
 
         return ledger;
     }
@@ -162,16 +157,6 @@ public class LedgerParser {
         String comment = String.join(" ",s);
 
         return new BookItem(date,number,comment,kredit,debet);
-    }
-
-    private static double getSaldoOut(ArrayList<String> s) {
-        s.subList(0, 5).clear();
-        String saldo = String.join("", s);
-        saldo = saldo.substring(saldo.indexOf(",")+1);
-        saldo = saldo.substring(saldo.indexOf(",")+1);
-        saldo = saldo.substring(2);
-
-        return Double.parseDouble(saldo.replace(",","."));
     }
 
     private static double getSaldoIn(ArrayList<String> s) {
