@@ -19,7 +19,9 @@ public class Ledger {
     public double getKredit(int account) {
         double kredit = 0.0;
 
-        // TODO
+        for (BankDay<Item> b : accounts.get(account).values()) {
+            kredit += b.getKreditSum();
+        }
 
         return Rev.round(kredit,2);
     }
@@ -27,7 +29,9 @@ public class Ledger {
     public double getDebet(int account) {
         double debet = 0.0;
 
-        // TODO
+        for (BankDay<Item> b : accounts.get(account).values()) {
+            debet += b.getDebetSum();
+        }
 
         return Rev.round(debet,2);
     }

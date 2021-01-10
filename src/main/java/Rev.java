@@ -140,8 +140,7 @@ public class Rev {
 
         {
             sb.append("------------------------------- Leverantörsskulder -------------------------------\n");
-            checkDebAndKred(ledger, sb, 1623,"Leverantörsskulder");
-
+            checkDebAndKred(ledger, sb, 2440,"Leverantörsskulder");
         }
 
         {
@@ -171,6 +170,7 @@ public class Rev {
             sb.append("------------------------------- Aspning -------------------------------\n");
 
             double aspningSum = 0.0;
+
             if (ledger.accounts.containsKey(4242)) { // 4242    Kostnader Aspning
                 aspningSum += ledger.getDebet(4242);
             }
@@ -236,9 +236,7 @@ public class Rev {
                 sb.append("Aspning was cleared.\n");
             }
         }
-
-
-
+        
         System.out.println(sb.toString());
     }
 
