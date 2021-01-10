@@ -54,6 +54,12 @@ public class LedgerParser {
         if (lines.get(0).get(4).equals("balans")) {
             lines.remove(0); // remove "Ingaende balans"
         }
+
+        // some accounts just has nothing
+        if (lines.get(1).get(1).equals("")) {
+            return items;
+        }
+
         lines.remove(lines.size()-1); // remove "Utgaende saldo"
         lines.remove(lines.size()-1); // remove "Omslutning"
         double saldoIn = getSaldoIn(lines.remove(0));
@@ -175,12 +181,6 @@ public class LedgerParser {
         ArrayList<ArrayList<String>> arr1 = getLinesLedger(text1);
         ArrayList<ArrayList<String>> arr2 = getLinesLedger(text2);
 
-        arr1.remove(arr1.size()-1);
-        arr1.remove(arr1.size()-1);
-
-        arr2.remove(0);
-        arr2.remove(0);
-        arr2.remove(0);
         arr1.addAll(arr2);
 
         return createLedger(arr1, numberOfMembers,numberOfMembersAndLastMembers);
