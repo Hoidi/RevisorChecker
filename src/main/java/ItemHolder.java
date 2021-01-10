@@ -58,9 +58,8 @@ public class ItemHolder<T extends Item> {
             } else {
                 BankDay<T> a = day;
                 BankDay<T> b = bItemHolder.getDay(day.getDate());
-                if (a.equals(b)) {
-                    System.out.println("Day " + day.getDate() + " is good");
-                } else {
+                // check if day is good
+                if (!a.equals(b)) {
                     a.getItems().addAll(b.getItems());
                     if (a.getItems().size() > 0) {
                         errorMap.put(day.getDate(), a);
