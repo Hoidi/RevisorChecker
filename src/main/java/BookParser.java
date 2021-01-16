@@ -171,9 +171,11 @@ public class BookParser {
         ArrayList<ArrayList<String>> arr1 = getLinesBook(text1);
         ArrayList<ArrayList<String>> arr2 = getLinesBook(text2);
 
+        arr1.remove(1); // remove ingaende balans
         arr1.remove(arr1.size()-1);
         arr1.remove(arr1.size()-1);
 
+        arr2.remove(0);
         arr2.remove(0);
         arr2.remove(0);
         arr1.addAll(arr2);
