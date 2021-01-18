@@ -62,6 +62,7 @@ public class BankDay<T extends Item> implements Comparable<BankDay<T>> {
             int oldSize1 = items.size();
             int oldSize2 = tBankDay.items.size();
 
+            // have to test all possible combination for a day to validate
             while (!combinationOfSet(items,tBankDay.items)) {
                 if (oldSize1 == items.size() && oldSize2 == tBankDay.items.size()) {
                     // no items were removed -> no combination exists -> bookkeeping is wrong

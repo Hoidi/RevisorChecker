@@ -8,16 +8,20 @@ public class Ledger {
 
     // used to calculate the limits of the policies
     private final int numberOfMembers;
-    private final int numberOfMembersAndLastMembers;
+    private final int numberOfLastMembers;
 
 
-    public Ledger(int numberOfMembers, int numberOfMembersAndLastMembers) {
+    public Ledger(int numberOfMembers, int numberOfLastMembers) {
         this.numberOfMembers = numberOfMembers;
-        this.numberOfMembersAndLastMembers = numberOfMembersAndLastMembers;
+        this.numberOfLastMembers = numberOfLastMembers;
     }
 
     public double getKredit(int account) {
         double kredit = 0.0;
+
+        if (!accounts.containsKey(account)) {
+            return 0.0;
+        }
 
         for (BankDay<Item> b : accounts.get(account).values()) {
             kredit += b.getKreditSum();
@@ -28,6 +32,10 @@ public class Ledger {
 
     public double getDebet(int account) {
         double debet = 0.0;
+
+        if (!accounts.containsKey(account)) {
+            return 0.0;
+        }
 
         for (BankDay<Item> b : accounts.get(account).values()) {
             debet += b.getDebetSum();
@@ -62,7 +70,7 @@ public class Ledger {
         return numberOfMembers;
     }
 
-    public int getNumberOfMembersAndLastMembers() {
-        return numberOfMembersAndLastMembers;
+    public int getNumberOfLastMembers() {
+        return numberOfLastMembers;
     }
 }

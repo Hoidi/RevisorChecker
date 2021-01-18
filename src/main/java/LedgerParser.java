@@ -30,8 +30,8 @@ public class LedgerParser {
         return lines;
     }
 
-    public static Ledger createLedger(ArrayList<ArrayList<String>> lines, int numberOfMembers, int numberOfMembersAndLastMembers) {
-        Ledger ledger = new Ledger(numberOfMembers,numberOfMembersAndLastMembers);
+    public static Ledger createLedger(ArrayList<ArrayList<String>> lines, int numberOfMembers, int numberOfLastMembers) {
+        Ledger ledger = new Ledger(numberOfMembers,numberOfLastMembers);
 
         lines.remove(lines.size()-1);
 
@@ -177,12 +177,12 @@ public class LedgerParser {
         return Double.parseDouble(saldo.replace(",","."));
     }
 
-    public static Ledger createLedger(String text1, String text2, int numberOfMembers, int numberOfMembersAndLastMembers) {
+    public static Ledger createLedger(String text1, String text2, int numberOfMembers, int numberOfLastMembers) {
         ArrayList<ArrayList<String>> arr1 = getLinesLedger(text1);
         ArrayList<ArrayList<String>> arr2 = getLinesLedger(text2);
 
         arr1.addAll(arr2);
 
-        return createLedger(arr1, numberOfMembers,numberOfMembersAndLastMembers);
+        return createLedger(arr1, numberOfMembers,numberOfLastMembers);
     }
 }

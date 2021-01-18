@@ -56,13 +56,12 @@ public class ItemHolder<T extends Item> {
             if (!bItemHolder.bankDays.containsKey(day.getDate())) {
                 errorMap.put(day.getDate(),day);
             } else {
-                BankDay<T> a = day;
                 BankDay<T> b = bItemHolder.getDay(day.getDate());
                 // check if day is good
-                if (!a.equals(b)) {
-                    a.getItems().addAll(b.getItems());
-                    if (a.getItems().size() > 0) {
-                        errorMap.put(day.getDate(), a);
+                if (!day.equals(b)) {
+                    day.getItems().addAll(b.getItems());
+                    if (day.getItems().size() > 0) {
+                        errorMap.put(day.getDate(), day);
                     }
                 }
             }

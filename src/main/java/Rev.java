@@ -1,4 +1,3 @@
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
 
@@ -10,33 +9,26 @@ import java.util.*;
 
 public class Rev {
     public static void main(String[] args)  {
-        boolean twoDocs = switch (args[0]) {
-            case "t" -> true;
-            case "o", "." -> false;
-            default -> throw new RuntimeException("Wrong second input");
-        };
-
-        int numberOfMembers = 8;
-        int numberOfMembersAndLastMembers = 16;
+        boolean twoDocs = args[0].equals("t");
 
         if (twoDocs) {
-            bookkeepingCheck(args[1], args[2], args[3], args[4], args[5], numberOfMembers, numberOfMembersAndLastMembers);
+            bookkeepingCheck(args[1], args[2], args[3], args[4], args[5], Integer.parseInt(args[6]), Integer.parseInt(args[7]));
         } else {
-            bookkeepingCheck(args[1], args[2], args[3], numberOfMembers, numberOfMembersAndLastMembers);
+            bookkeepingCheck(args[1], args[2], args[3], Integer.parseInt(args[4]), Integer.parseInt(args[5]));
         }
     }
 
-    private static void bookkeepingCheck(String bankPath, String bookPath1, String bookPath2, String ledgerPath1, String ledgerPath2, int numberOfMembers, int numberOfMembersAndLastMembers) {
+    private static void bookkeepingCheck(String bankPath, String bookPath1, String bookPath2, String ledgerPath1, String ledgerPath2, int numberOfMembers, int numberOfLastMembers) {
         bankCheck(bankPath, bookPath1, bookPath2);
-        ledgerCheck(ledgerPath1,ledgerPath2, numberOfMembers,numberOfMembersAndLastMembers);
+        ledgerCheck(ledgerPath1,ledgerPath2, numberOfMembers,numberOfLastMembers);
     }
 
-    private static void bookkeepingCheck(String bankPath, String bookPath, String ledgerPath, int numberOfMembers, int numberOfMembersAndLastMembers) {
+    private static void bookkeepingCheck(String bankPath, String bookPath, String ledgerPath, int numberOfMembers, int numberOfLastMembers) {
         bankCheck(bankPath, bookPath);
-        ledgerCheck(ledgerPath,numberOfMembers,numberOfMembersAndLastMembers);
+        ledgerCheck(ledgerPath,numberOfMembers,numberOfLastMembers);
     }
 
-    private static void ledgerCheck(String ledgerPath1, String ledgerPath2, int numberOfMembers, int numberOfMembersAndLastMembers) {
+    private static void ledgerCheck(String ledgerPath1, String ledgerPath2, int numberOfMembers, int numberOfLastMembers) {
         Ledger ledger = null;
 
         PDDocument pd;
@@ -58,7 +50,7 @@ public class Rev {
                 BookParser.getLinesBook(text2);
             }
             pd.close();
-            ledger = LedgerParser.createLedger(text1,text2,numberOfMembers,numberOfMembersAndLastMembers);
+            ledger = LedgerParser.createLedger(text1,text2,numberOfMembers,numberOfLastMembers);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -67,7 +59,7 @@ public class Rev {
         evaluateLedger(ledger);
     }
 
-    private static void ledgerCheck(String ledgerPath, int numberOfMembers, int numberOfMembersAndLastMembers) {
+    private static void ledgerCheck(String ledgerPath, int numberOfMembers, int numberOfLastMembers) {
         Ledger ledger = null;
 
         PDDocument pd;
@@ -76,7 +68,7 @@ public class Rev {
             if (!pd.isEncrypted()) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 String text = stripper.getText(pd);
-                ledger = LedgerParser.createLedger(LedgerParser.getLinesLedger(text),numberOfMembers,numberOfMembersAndLastMembers);
+                ledger = LedgerParser.createLedger(LedgerParser.getLinesLedger(text),numberOfMembers,numberOfLastMembers);
             }
             pd.close();
         } catch (IOException e) {
@@ -86,11 +78,14 @@ public class Rev {
         evaluateLedger(ledger);
     }
 
+    /**
+     * Checks if the given ledger has followed the economic policy
+     */
     private static void evaluateLedger(Ledger ledger) {
         StringBuilder sb = new StringBuilder();
 
+        sb.append("------------------------------- Fordringar --------------------------------\n");
         {
-            sb.append("------------------------------- Fordringar -------------------------------\n");
             checkDebAndKred(ledger, sb, 1510, "Kundfordringar");
             checkDebAndKred(ledger, sb, 1610, "Fordringar PRIT");
             checkDebAndKred(ledger, sb, 1611, "Fordringar sexIT");
@@ -108,13 +103,13 @@ public class Rev {
             checkDebAndKred(ledger, sb, 1623, "Fordringar EqualIT");
         }
 
+        sb.append("------------------------------- Leverantörsskulder ------------------------\n");
         {
-            sb.append("------------------------------- Leverantörsskulder -------------------------------\n");
             checkDebAndKred(ledger, sb, 2440,"Leverantörsskulder");
         }
 
+        sb.append("------------------------------- Intern reps -------------------------------\n");
         {
-            sb.append("------------------------------- Intern reps -------------------------------\n");
             if (ledger.accounts.containsKey(4510)) {
                 boolean status = true;
                 for (BankDay<Item> b : ledger.accounts.get(4510).values()) {
@@ -136,80 +131,50 @@ public class Rev {
             }
         }
 
+        sb.append("------------------------------- Aspning -----------------------------------\n");
         {
-            sb.append("------------------------------- Aspning -------------------------------\n");
+            int[] aspAccounts = {4242,4254,4255};
 
-            double aspningSum = 0.0;
-
-            if (ledger.accounts.containsKey(4242)) { // 4242    Kostnader Aspning
-                aspningSum += ledger.getDebet(4242);
-            }
-            if (ledger.accounts.containsKey(4243)) { // 4243 	Kostnader Aspning PRIT
-                aspningSum += ledger.getDebet(4243);
-            }
-            if (ledger.accounts.containsKey(4244)) { // 4244 	Kostnader Aspning sexIT
-                aspningSum += ledger.getDebet(4244);
-            }
-            if (ledger.accounts.containsKey(4245)) { // 4245 	Kostnader Aspning NollKIT
-                aspningSum += ledger.getDebet(4245);
-            }
-            if (ledger.accounts.containsKey(4246)) { // 4246 	Kostnader Aspning frITid
-                aspningSum += ledger.getDebet(4246);
-            }
-            if (ledger.accounts.containsKey(4247)) { // 4247 	Kostnader Aspning armIT
-                aspningSum += ledger.getDebet(4247);
-            }
-            if (ledger.accounts.containsKey(4248)) { // 4248 	Kostnader Aspning digIT
-                aspningSum += ledger.getDebet(4248);
-            }
-            if (ledger.accounts.containsKey(4254)) { // 4254 	Kostnader Aspning Revisorer
-                aspningSum += ledger.getDebet(4254);
-            }
-            if (ledger.accounts.containsKey(4255)) { // 4255 	Kostnader Aspning Dataskyddsombud
-                aspningSum += ledger.getDebet(4255);
-            }
-
-            aspningSum = round(aspningSum, 2);
-            if (aspningSum > 3000.0) {
-                sb.append("Total aspning cost went above 3000 kr. Total was: ").append(aspningSum).append(" kr\n");
-            } else {
-                sb.append("Total: \t").append(aspningSum).append(" kr\n");
-                sb.append("Aspning was cleared.\n");
+            for (int account : aspAccounts) {
+                if (ledger.accounts.containsKey(account)) {
+                    double aspningSum = ledger.getDebet(account);
+                    if (aspningSum > 3000.0) {
+                        sb.append("Total aspning cost went above 3000 kr. Total was: ").append(aspningSum).append(" kr\n");
+                    } else {
+                        sb.append("Total: \t").append(aspningSum).append(" kr\n");
+                        sb.append("Aspning was cleared.\n");
+                    }
+                }
             }
         }
 
+        sb.append("------------------------------- Överlämning -------------------------------\n");
         {
-            sb.append("------------------------------- Överlämning -------------------------------\n");
-            double handoverSum = 0.0;
-            if (ledger.accounts.containsKey(4241)) { // 4242    Kostnader Överlämning
-                handoverSum += ledger.getDebet(4241);
-            }
-            if (ledger.accounts.containsKey(4250)) { // 4250 	Kostnader Overlamning Revisorer
-                handoverSum += ledger.getDebet(4250);
-            }
-            if (ledger.accounts.containsKey(4251)) { // 4251 	Kostnader Overlamning Dataskyddsombud
-                handoverSum += ledger.getDebet(4251);
-            }
-            if (ledger.accounts.containsKey(4252)) { // 4252 	Kostnader Overlamning Valberedning
-                handoverSum += ledger.getDebet(4252);
-            }
+            int[] handoverAccounts = {4241,4250,4251,4252};
 
-
-            // TODO: Change to right amount of ppl
-            handoverSum = round(handoverSum, 2);
-            if (handoverSum > 3000.0) {
-                sb.append("Total överlämning cost went above ")
-                        .append(round(ledger.getNumberOfMembersAndLastMembers()*215,2))
-                        .append(" kr. Total was: ").append(handoverSum).append(" kr\n");
-            } else {
-                sb.append("Total: \t").append(handoverSum).append(" kr\n");
-                sb.append("Aspning was cleared.\n");
+            for (int account : handoverAccounts) {
+                if (ledger.accounts.containsKey(account)) {
+                    double handoverSum = ledger.getDebet(account);
+                    double max = Math.min(3000, (ledger.getNumberOfLastMembers() + ledger.getNumberOfMembers()) * 215);
+                    if (handoverSum > max) {
+                        sb.append("Total överlämning cost went above ")
+                                .append(round(max,2))
+                                .append(" kr. Total was: ").append(handoverSum).append(" kr\n");
+                    } else {
+                        sb.append("Total: \t").append(handoverSum).append(" kr\n");
+                        sb.append("Överlämning was cleared.\n");
+                    }
+                }
             }
         }
 
         System.out.println(sb.toString());
     }
 
+    /**
+     * Checks that debet and kredit for the given account is the same
+     *
+     */
     private static void checkDebAndKred(Ledger ledger, StringBuilder sb, int account, String name) {
         if (ledger.accounts.containsKey(account)) {
             double kredit = ledger.getKredit(account);
@@ -226,11 +191,18 @@ public class Rev {
         }
     }
 
+    /**
+     * This method is used if two account analysis is being checked
+     *
+     * @param bankPath  Path to the bank pdf
+     * @param bookPath1 Path to the first account analysis pdf
+     * @param bookPath2 Path to the second account analysis pdf
+     */
     private static void bankCheck(String bankPath, String bookPath1, String bookPath2) {
         ItemHolder book = null;
         ItemHolder bank = null;
 
-        PDDocument pd = null;
+        PDDocument pd;
         try {
             String text1 = "";
             String text2 = "";
@@ -265,6 +237,12 @@ public class Rev {
         evaluateBookkeeping(book,bank);
     }
 
+    /**
+     * This method is used if only one account analysis is being checked
+     *
+     * @param bankPath  Path to the bank pdf
+     * @param bookPath Path to the account analysis pdf
+     */
     private static void bankCheck(String bankPath, String bookPath) {
         ItemHolder book = null;
         ItemHolder bank = null;
@@ -293,6 +271,9 @@ public class Rev {
         evaluateBookkeeping(book,bank);
     }
 
+    /**
+     * Given a bank and a account analysis, it checks that all numbers match
+     */
     private static void evaluateBookkeeping(ItemHolder book, ItemHolder bank) {
         HashMap errorMap = book.equals(bank);
         if (errorMap.size() == 0 && book.getSaldoIn() == bank.getSaldoIn() && book.getSaldoUt() == bank.getSaldoUt()) {
@@ -311,15 +292,18 @@ public class Rev {
         }
     }
 
-    public static double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
+    /**
+     * Rounds value to the given number of decimals
+     */
+    public static double round(double value, int decimals) {
+        if (decimals < 0) throw new IllegalArgumentException();
 
         BigDecimal bd = BigDecimal.valueOf(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        bd = bd.setScale(decimals, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
 
-    // TODO: This is an ugly hack :(
+    // This is an ugly hack :(
     static class MyDouble {
         private double d;
 
