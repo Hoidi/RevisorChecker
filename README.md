@@ -14,7 +14,7 @@ followed by
 #### Examples of arguments to run
 A check that is only for one bookkeeping year:
 
-    o path/to/banking.pdf path/to/analysis.pdf path/to/ledger.pdf 6 7
+    path/to/banking.pdf path/to/analysis.pdf path/to/ledger.pdf 6 7
 
 If a check is over two bookkeeping years (SP1 or ansvarsbefrielse):
 
