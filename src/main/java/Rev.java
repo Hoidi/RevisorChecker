@@ -14,7 +14,7 @@ public class Rev {
         if (twoDocs) {
             bookkeepingCheck(args[1], args[2], args[3], args[4], args[5], Integer.parseInt(args[6]), Integer.parseInt(args[7]));
         } else {
-            bookkeepingCheck(args[1], args[2], args[3], Integer.parseInt(args[4]), Integer.parseInt(args[5]));
+            bookkeepingCheck(args[0], args[1], args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4]));
         }
     }
 
