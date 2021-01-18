@@ -30,49 +30,33 @@ public class BankParser {
         for (int i = 1; i < lines.size(); i++) {
             if (Integer.parseInt(fromDate) > Integer.parseInt(lines.get(1).get(0))) {
                 lines.remove(1);
-            } else {
-                // TODO: Could keep the else only
-                if (i == 1) { // if no lines were removed
-                    lines.get(0).remove(0);
-                    lines.get(0).remove(0);
-                    lines.get(0).remove(0);
-                    String saldo = String.join("",lines.get(0));
-                    lines.get(0).clear();
-                    lines.get(0).add(saldo);
-                } else {
-                    lines.remove(0);
-                    ArrayList<String> firstLine = new ArrayList<>(lines.get(0));
-                    lines.get(0).remove(0);
-                    lines.get(0).remove(0);
-                    lines.get(0).remove(0);
-                    String oldStr = String.join(" ", lines.get(0));
-                    double old = Double.parseDouble(oldStr.
-                            substring(oldStr.lastIndexOf(",", oldStr.lastIndexOf(",") - 1)).
-                            substring(4).
-                            replace(" ","").
-                            replace(",","."));
-                    // TODO: Fix this
-                    if (old < 1000.0) {
-                        lines.get(0).remove(lines.get(0).size()-1);
-                    } else if (old < 1000000.0) {
-                        lines.get(0).remove(lines.get(0).size()-1);
-                        lines.get(0).remove(lines.get(0).size()-1);
-                    } else if (old < 1000000000.0) {
-                        lines.get(0).remove(lines.get(0).size()-1);
-                        lines.get(0).remove(lines.get(0).size()-1);
-                        lines.get(0).remove(lines.get(0).size()-1);
-                    }
-                    ArrayList<String> tmp = new ArrayList<>();
-                    while (isNumeric(lines.get(0).get(lines.get(0).size()-1).replace(",","."))) {
-                        tmp.add(lines.get(0).remove(lines.get(0).size()-1));
-                    }
-                    Collections.reverse(tmp);
-                    double diff = Double.parseDouble(String.join("",tmp).replace(",","."));
-                    String realSaldo = Double.toString(Rev.round(old - diff,2)).replace(".",",");
-                    lines.get(0).clear();
-                    lines.get(0).add(0,realSaldo);
-                    lines.add(1,firstLine);
+            } else { // put the "money in" as the only element in the first row
+                lines.remove(0);
+                ArrayList<String> firstLine = new ArrayList<>(lines.get(0));
+                lines.get(0).remove(0);
+                lines.get(0).remove(0);
+                lines.get(0).remove(0);
+                String oldStr = String.join(" ", lines.get(0));
+                double old = Double.parseDouble(oldStr.
+                        substring(oldStr.lastIndexOf(",", oldStr.lastIndexOf(",") - 1)).
+                        substring(4).
+                        replace(" ","").
+                        replace(",","."));
+                double oldTmp = old;
+                while (oldTmp > 1) {
+                    lines.get(0).remove(lines.get(0).size()-1);
+                    oldTmp /= 1000;
                 }
+                ArrayList<String> tmp = new ArrayList<>();
+                while (isNumeric(lines.get(0).get(lines.get(0).size()-1).replace(",","."))) {
+                    tmp.add(lines.get(0).remove(lines.get(0).size()-1));
+                }
+                Collections.reverse(tmp);
+                double diff = Double.parseDouble(String.join("",tmp).replace(",","."));
+                String realSaldo = Double.toString(Rev.round(old - diff,2)).replace(".",",");
+                lines.get(0).clear();
+                lines.get(0).add(0,realSaldo);
+                lines.add(1,firstLine);
                 break;
             }
         }
@@ -127,32 +111,23 @@ public class BankParser {
 
         double saldoDiff = Rev.round(newSaldo - lastSaldo, 2);
 
-        // TODO: This is so ugly
-        if (Math.abs(newSaldo) < 1000.0) {
+
+        double saldoTmp = Math.abs(newSaldo);
+        while (saldoTmp > 1) {
             s.remove(s.size()-1);
-        } else if (Math.abs(newSaldo) < 1000000.0) {
-            s.remove(s.size()-1);
-            s.remove(s.size()-1);
-        } else if (Math.abs(newSaldo) < 1000000000.0) {
-            s.remove(s.size()-1);
-            s.remove(s.size()-1);
-            s.remove(s.size()-1);
+            saldoTmp /= 1000;
         }
 
         double kredit = 0.0;
         double debet = 0.0;
 
+        // figure out how much money there is
         if (saldoDiff < 0) { // Kredit
             ArrayList<String> kredList = new ArrayList<>();
-            if (Math.abs(saldoDiff) < 1000.0) {
+            double diffTmp = Math.abs(saldoDiff);
+            while (diffTmp > 1) {
                 kredList.add(s.remove(s.size()-1));
-            } else if (Math.abs(saldoDiff) < 1000000.0) {
-                kredList.add(s.remove(s.size()-1));
-                kredList.add(s.remove(s.size()-1));
-            } else if (Math.abs(saldoDiff) < 1000000000.0) {
-                kredList.add(s.remove(s.size()-1));
-                kredList.add(s.remove(s.size()-1));
-                kredList.add(s.remove(s.size()-1));
+                diffTmp /= 1000;
             }
             Collections.reverse(kredList);
             kredit = Math.abs(Double.parseDouble(
@@ -161,15 +136,10 @@ public class BankParser {
                             replace(",",".")));
         } else { // Debet
             ArrayList<String> debList = new ArrayList<>();
-            if (Math.abs(saldoDiff) < 1000.0) {
+            double diffTmp = Math.abs(saldoDiff);
+            while (diffTmp > 1) {
                 debList.add(s.remove(s.size()-1));
-            } else if (Math.abs(saldoDiff) < 1000000.0) {
-                debList.add(s.remove(s.size()-1));
-                debList.add(s.remove(s.size()-1));
-            } else if (Math.abs(saldoDiff) < 1000000000.0) {
-                debList.add(s.remove(s.size()-1));
-                debList.add(s.remove(s.size()-1));
-                debList.add(s.remove(s.size()-1));
+                diffTmp /= 1000;
             }
             Collections.reverse(debList);
             debet = Double.parseDouble(
