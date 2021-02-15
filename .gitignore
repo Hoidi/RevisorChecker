@@ -30,3 +30,5 @@ gradle-app.setting
 .gradletasknamecache
 
 .idea/
+
+out/
