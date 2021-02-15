@@ -2,6 +2,15 @@ plugins {
     id 'java'
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'Rev'
+        )
+    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
 group 'org.example'
 version '1.0-SNAPSHOT'
 
@@ -25,3 +34,4 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
