@@ -281,6 +281,8 @@ public class Rev {
         } else {
             System.out.println("Book in: " + book.getSaldoIn() + "\t\t" + "Book ut: " + book.getSaldoUt());
             System.out.println("Bank in: " + bank.getSaldoIn() + "\t\t" + "Bank ut: " + bank.getSaldoUt());
+            System.out.println("Bank diff: " + (bank.getSaldoIn()-bank.getSaldoUt()));
+            System.out.println("Book diff: " + (book.getSaldoIn()-book.getSaldoUt()));
 
             List<BankDay> list = new ArrayList<BankDay>(errorMap.values());
 
