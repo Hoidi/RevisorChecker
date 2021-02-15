@@ -46,6 +46,11 @@ public class BookParser {
 
         Rev.MyDouble lastSaldo = new Rev.MyDouble(saldoIn);
 
+        // Is true if no bookkeeping has been done
+        if (lines.get(0).get(1).equals("")) {
+            return bookBank;
+        }
+
         for (ArrayList<String> s : lines) {
             BookItem b = createBookItem(s,lastSaldo);
             bookBank.addItem(b);
