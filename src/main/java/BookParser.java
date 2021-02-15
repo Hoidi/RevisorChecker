@@ -15,6 +15,13 @@ public class BookParser {
         // remove first few lines
         lines.subList(0, 4).clear();
 
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).get(0).equals("Kostnadsställe")) {
+                lines.remove(lines.get(i));
+                i--;
+            }
+        }
+
         for (int i = 0; i < 9; i++) {
             lines.remove(1); // keeps the period date line (at index 0)
         }
